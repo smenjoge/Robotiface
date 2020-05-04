@@ -11,4 +11,6 @@ Weather App homework (wk6)
 4) "One Call API" also returns forecast for next 7 days. From this, we use 5 days of Data to display. 
 5) When user searches for a City name, a new button is displayed on the page for that City name. This 
     application is desiged to display last 10 cities searched by user. If more than 10 cities are searched, the oldest city button is removed from the page. 
+6) User can remove a particular City name from the List by clicking on the delete button next to the city name. If user deletes the city which he last clicked on 
+    or searched for, then the page is refreshed with the weather information of first city in the array. 
     
