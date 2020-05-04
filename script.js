@@ -206,7 +206,9 @@ $(document).on("click", ".delButton", function() {
   localStorage.setItem("cities", JSON.stringify(citiesStorage));
   renderButtons();
   if (delThisCity == lastGoodCity ) {
-    displayCityWeather(citiesStorage[0]);
+    if (citiesStorage.length > 0) {
+      displayCityWeather(citiesStorage[0]);
+    }
   }
   else {
     displayCityWeather(lastGoodCity);
