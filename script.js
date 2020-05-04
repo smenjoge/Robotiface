@@ -18,19 +18,20 @@ function displayCityWeather(cityName) {
     function(response) {
     var lat = response.coord.lat;
     var long = response.coord.lon;
-    var cityCountry = response.name + "," + response.sys.country;
-    callOneCallAPI(cityCountry, lat, long);
+    var nameCountry = response.sys.country;
+    callOneCallAPI(cityName, nameCountry, lat, long);
     },
     function(errResponse) {
       errorInAPI = true;
       var msg = cityName + " " + errResponse.responseJSON.message;
+
       weatherAPIFail(msg);
     }
   )
 };
 
 // This function calls the 'One Call API' to get current and 5 day forecast weather information 
-function callOneCallAPI (Name, cityLat, cityLong) {
+function callOneCallAPI (cityName, nameCountry, cityLat, cityLong) {
   OneCallApiURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + cityLat + "&lon=" + cityLong + "&units=imperial&appid=07f0e0a67e0b50a9e658e6cfe5b0368a";
 
   $.ajax({
@@ -45,12 +46,12 @@ function callOneCallAPI (Name, cityLat, cityLong) {
     var UVIndex = parseFloat(response.current.uvi);
 
     var icon = response.current.weather[0].icon;
-    var urlIcon = "http://openweathermap.org/img/wn/" + icon + ".png";
+    var urlIcon = "https://openweathermap.org/img/wn/" + icon + ".png";
     // var iconImg = $("<img>").attr({src: urlIcon, style: "box-shadow: 2px 2px;"});
     var iconImg = $("<img>").attr("src", urlIcon);
 
     // Display Current weather information
-    $("#cityNameDate").text(Name + "(" + weatherDate + ")");
+    $("#cityNameDate").text(cityName + "," + nameCountry + "(" + weatherDate + ")");
     $("#cityNameDate").append(iconImg);
     $("#currentTemp").text("Temperature: " + tempFarh);
     $("#currentHmdty").text("Humidity: " + humidity);
@@ -78,7 +79,7 @@ function callOneCallAPI (Name, cityLat, cityLong) {
       var tempForecast = response.daily[j].temp.day + "°F";
       var humidityForecast = response.daily[j].humidity + "%";
       var iconForecast =  response.daily[j].weather[0].icon;
-      var urlIconForecast = "http://openweathermap.org/img/wn/" + iconForecast + ".png";
+      var urlIconForecast = "https://openweathermap.org/img/wn/" + iconForecast + ".png";
 
       var newDiv = $("<div>").attr({
         class: "card text-white bg-info m-2 p-2",
@@ -92,9 +93,8 @@ function callOneCallAPI (Name, cityLat, cityLong) {
 
       cardGrpDiv.append(newDiv);
     }
-
+    lastGoodCity = cityName;
   });
-  lastGoodCity = Name;
 };
 
 function weatherAPIFail(errMessage) {
@@ -106,7 +106,9 @@ function weatherAPIFail(errMessage) {
   
   localStorage.setItem("cities", JSON.stringify(citiesStorage));
   renderButtons();
-  displayCityWeather(lastGoodCity);
+  if (lastGoodCity) {
+    displayCityWeather(lastGoodCity);
+  }
   $(".weatherResult").removeClass("invisible");
   var errorDiv = $(".weatherToday");
   errorDiv.prepend($("<h4 class='text-danger'>").text(errMessage));
@@ -124,11 +126,22 @@ function renderButtons() {
   $(".weatherResult").addClass("invisible");
 
   for (var i = 0; i < citiesStorage.length; i++) {
+    var buttonDiv = $("<div class='btn-group btn-block'>");
+    
     var newButton = $("<button>");
     newButton.addClass("btn btn-outline-secondary btn-md btn-block cityButton");
-    newButton.attr("data-name", citiesStorage[i]);
-    newButton.text(citiesStorage[i]);
-    $(".cityButtons").append(newButton);
+    newButton.attr({"data-name": citiesStorage[i], style: "font-size: 1rem;"});
+    newButton.text(citiesStorage[i]);      
+
+    var delButton = $("<button>");
+    delButton.addClass("btn btn-outline-warning btn-sm delButton");
+    delButton.attr("data-name", citiesStorage[i]);
+    delButton.html("<i class='fas fa-trash-alt'></i>");
+
+    buttonDiv.append(newButton);
+    buttonDiv.append(delButton);
+
+    $(".cityButtons").append(buttonDiv);
   }
 
   if (!errorInAPI) {
@@ -173,11 +186,31 @@ $("#searchCity").on("click", function(event) {
   displayCityWeather(cityUCase);
 });
 
-//Event Listner for City Name buttons. This fuctions check which CIty button was clicked and calls fuctions 
+//Event Listner for City Name buttons. This fuctions check which City button was clicked and calls fuctions 
 //to display weather for that City. 
 $(document).on("click", ".cityButton", function() {
   var cityClicked =  $(this).attr("data-name");
   displayCityWeather(cityClicked);
+});
+
+// This function removes the City Button from the screen and display 
+$(document).on("click", ".delButton", function() {
+  event.preventDefault();
+
+  var delThisCity =  $(this).attr("data-name");
+  var citiesStorage = JSON.parse(localStorage.getItem("cities"));
+  var indexOfCity = $.inArray(delThisCity, citiesStorage);
+  if (indexOfCity != -1) {
+    citiesStorage.splice(indexOfCity,1);
+  }
+  localStorage.setItem("cities", JSON.stringify(citiesStorage));
+  renderButtons();
+  if (delThisCity == lastGoodCity ) {
+    displayCityWeather(citiesStorage[0]);
+  }
+  else {
+    displayCityWeather(lastGoodCity);
+  }
 });
 
 renderButtons();
