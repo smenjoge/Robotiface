@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Weather Forecast</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <script src="https://kit.fontawesome.com/9a7ec026c0.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <header class="jumbotron text-center bg-info">
+    <h1 class="display-5">Weather Dashboard</h1>
+  </header>
+
+  <div class="container mx-auto">
+    <div class="row">
+      <div class="col-md-3 ">
+        <div class="card border-dark mb-3">
+          <div class="card-header">
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" id="inputCity" placeholder="City Name" aria-label="City Name" aria-describedby="City Name">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="submit" id="searchCity"><i class="fas fa-search"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="card-body text-dark cityButtons">
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-9 weatherResult">
+        <div class="card border-dark bg-white mb-3" >
+          <div class="card-body text-dark weatherToday">
+            <h3 id="cityNameDate"></h3>
+            <p id="currentTemp"></p>
+            <p id="currentHmdty"></p>
+            <p id="currentWind"></p>
+            <p id="currentUVI"></p>
+          </div>
+        </div>
+        <h3></h3>
+        <div class="card-group futureWeather">
+        </div> 
+      </div>      
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>
